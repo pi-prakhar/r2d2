@@ -2,18 +2,37 @@ package cmd
 
 import (
 	"fmt"
+
 	"os"
 
 	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "watch-tags",
-	Short: "A CLI tool to watch Kubernetes deployment image tags",
-	Long:  `watch-tags is a command-line tool to monitor container image tags of deployments in a Kubernetes namespace.`,
+	Use:   "r2d2",
+	Short: "Your Kubernetes protocol droid.",
+	Long: `
+            ___
+          ,-'___'-.
+        ,'  [(_)]  '.
+       |_]||[][O]o[][|
+     _ |_____________| _
+    | []   _______   [] |
+    | []   _______   [] |
+   [| ||      _      || |]
+    |_|| =   [=]     ||_|
+    | || =   [|]     || |
+    | ||      _      || |
+    | ||||   (+)    (|| |
+    | ||_____________|| |
+    |_| \___________/ |_|
+    / \      | |      / \
+   /___\    /___\SSt /___\
+
+Beep-boop! I'm R2-D2 — your loyal CLI droid, helping you monitor and 
+manage Kubernetes deployments like a true Jedi.`,
 }
 
-// Execute runs the root command.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

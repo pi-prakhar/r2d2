@@ -1,0 +1,53 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # Triggers when a tag starting with "v" is pushed
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the repository code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Go environment
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.18'  # Change as needed
+
+      # Build the binary
+      - name: Build binary
+        run: |
+          # Build the binary (adjust main package path if necessary)
+          go build -o r2d2 .
+          # Package the binary (here we create a gzipped tarball; adjust for your OS/platform)
+          tar -czvf r2d2.tar.gz r2d2
+
+      # Create a GitHub release based on the pushed tag
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      # Upload the binary as a release asset
+      - name: Upload Release Asset
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./r2d2.tar.gz
+          asset_name: r2d2.tar.gz
+          asset_content_type: application/gzip

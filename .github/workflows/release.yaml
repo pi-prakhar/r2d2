@@ -14,16 +14,6 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: '1.24'
-      
-      - name: Verify tag is from master branch
-        run: |
-          TAG_COMMIT=$(git rev-list -n 1 ${{ github.ref }})
-          MASTER_BRANCH=$(git branch -r --contains $TAG_COMMIT | grep "origin/master" || echo "")
-          if [ -z "$MASTER_BRANCH" ]; then
-            echo "This tag was not created from the master branch. Stopping release."
-            exit 1
-          fi
-          echo "Tag was created from master branch. Proceeding with release."
             
       - name: Build binaries for multiple platforms
         run: |

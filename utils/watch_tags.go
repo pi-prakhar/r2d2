@@ -7,11 +7,18 @@ import (
 )
 
 // NewApp initializes a new tview application.
-func NewWatchTagsApp() *App {
+func NewWatchTagsApp(namespace string) *App {
 	app := &App{
 		application: tview.NewApplication(),
 		table:       tview.NewTable(),
+		namespace:   namespace,
 	}
+
+	app.table.SetTitle("Namespace: " + namespace).
+		SetTitleAlign(tview.AlignCenter).
+		SetTitleColor(tcell.ColorPurple).
+		SetBackgroundColor(tcell.ColorBlack).
+		SetBorder(true)
 
 	app.table.SetCell(0, 0, tview.NewTableCell("Deployment").
 		SetAlign(tview.AlignLeft).

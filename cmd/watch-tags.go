@@ -12,6 +12,7 @@ import (
 var (
 	namespace string
 	services  []string
+	frequency int
 )
 
 var watchTagsCmd = &cobra.Command{
@@ -29,7 +30,7 @@ var watchTagsCmd = &cobra.Command{
 			return
 		}
 
-		app := utils.NewWatchTagsApp()
+		app := utils.NewWatchTagsApp(namespace)
 
 		go func() {
 			for {
@@ -41,7 +42,7 @@ var watchTagsCmd = &cobra.Command{
 				}
 
 				app.UpdateTable(data)
-				time.Sleep(60 * time.Second)
+				time.Sleep(time.Duration(frequency) * time.Second)
 			}
 		}()
 
@@ -54,5 +55,6 @@ var watchTagsCmd = &cobra.Command{
 func init() {
 	watchTagsCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "Kubernetes namespace (required)")
 	watchTagsCmd.Flags().StringSliceVarP(&services, "services", "s", []string{}, "List of service/deployment names (required)")
+	watchTagsCmd.Flags().IntVarP(&frequency, "frequency", "f", 60, "Frequency of fetching tags in seconds (default: 60)")
 	rootCmd.AddCommand(watchTagsCmd)
 }

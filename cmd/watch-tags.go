@@ -12,16 +12,14 @@ import (
 var watchTagsCmd = &cobra.Command{
 	Use:   "watch-tags",
 	Short: "Watches deployment tags in a namespace",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if namespace == "" || len(services) == 0 {
-			fmt.Println("Error: --namespace and --services are required")
-			return
+			return fmt.Errorf("--namespace and --services are required")
 		}
 
 		clientset, err := k8s.GetClientSet()
 		if err != nil {
-			fmt.Printf("Error creating Kubernetes client: %v\n", err)
-			return
+			return fmt.Errorf("error creating Kubernetes client: %w", err)
 		}
 
 		app := utils.NewWatchTagsApp(namespace)
@@ -31,7 +29,7 @@ var watchTagsCmd = &cobra.Command{
 				data, err := k8s.FetchDeploymentInfo(clientset, namespace, services)
 				if err != nil {
 					app.Stop()
-					fmt.Printf("Error fetching deployment info: %v\n", err)
+					fmt.Printf("error fetching deployment info: %v\n", err)
 					return
 				}
 
@@ -41,8 +39,10 @@ var watchTagsCmd = &cobra.Command{
 		}()
 
 		if err := app.Run(); err != nil {
-			fmt.Printf("Error running the application: %v\n", err)
+			return fmt.Errorf("error running the application: %w", err)
 		}
+
+		return nil
 	},
 }
 

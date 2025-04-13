@@ -11,6 +11,7 @@ import (
 var (
 	namespace string
 	services  []string
+	tag       string
 	frequency int
 )
 

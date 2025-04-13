@@ -6,15 +6,15 @@ import (
 	"github.com/rivo/tview"
 )
 
-type WatchTagsApp struct {
+type WatchImagesApp struct {
 	application *tview.Application
 	table       *tview.Table
 	namespace   string
 }
 
 // NewApp initializes a new tview application.
-func NewWatchTagsApp(namespace string) *WatchTagsApp {
-	app := &WatchTagsApp{
+func NewWatchImagesApp(namespace string) *WatchImagesApp {
+	app := &WatchImagesApp{
 		application: tview.NewApplication(),
 		table:       tview.NewTable(),
 		namespace:   namespace,
@@ -32,7 +32,7 @@ func NewWatchTagsApp(namespace string) *WatchTagsApp {
 		SetAttributes(tcell.AttrBold).
 		SetBackgroundColor(tcell.ColorBlack))
 
-	app.table.SetCell(0, 1, tview.NewTableCell("Tag").
+	app.table.SetCell(0, 1, tview.NewTableCell("Image").
 		SetAlign(tview.AlignLeft).
 		SetTextColor(tcell.ColorYellow).
 		SetAttributes(tcell.AttrBold).
@@ -44,22 +44,22 @@ func NewWatchTagsApp(namespace string) *WatchTagsApp {
 	return app
 }
 
-func (a *WatchTagsApp) Run() error {
+func (a *WatchImagesApp) Run() error {
 	return a.application.Run()
 }
 
-func (a *WatchTagsApp) UpdateTable(data []k8s.Info) {
+func (a *WatchImagesApp) UpdateTable(data []k8s.Info) {
 	for i := 1; i < a.table.GetRowCount(); i++ {
 		a.table.RemoveRow(i)
 	}
 
 	for i, item := range data {
 		a.table.SetCell(i+1, 0, tview.NewTableCell(item.DeploymentName).SetAlign(tview.AlignLeft))
-		a.table.SetCell(i+1, 1, tview.NewTableCell(item.Tag).SetAlign(tview.AlignLeft))
+		a.table.SetCell(i+1, 1, tview.NewTableCell(item.Image).SetAlign(tview.AlignLeft))
 	}
 	a.application.Draw()
 }
 
-func (a *WatchTagsApp) Stop() {
+func (a *WatchImagesApp) Stop() {
 	a.application.Stop()
 }

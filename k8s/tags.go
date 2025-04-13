@@ -8,7 +8,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-type TagInfo struct {
+type Info struct {
 	DeploymentName string
 	ContainerName  string
 	Image          string
@@ -16,13 +16,13 @@ type TagInfo struct {
 }
 
 // FetchDeploymentTags retrieves deployments for given names and extracts container image tags.
-func FetchDeploymentTags(clientset *kubernetes.Clientset, namespace string, services []string) ([]TagInfo, error) {
-	var results []TagInfo
+func FetchDeploymentInfo(clientset *kubernetes.Clientset, namespace string, services []string) ([]Info, error) {
+	var results []Info
 
 	for _, name := range services {
 		deploy, err := clientset.AppsV1().Deployments(namespace).Get(context.Background(), name, metav1.GetOptions{})
 		if err != nil {
-			results = append(results, TagInfo{
+			results = append(results, Info{
 				DeploymentName: name,
 				ContainerName:  "-",
 				Image:          "Not Found",
@@ -38,7 +38,7 @@ func FetchDeploymentTags(clientset *kubernetes.Clientset, namespace string, serv
 				tag = imageParts[len(imageParts)-1]
 			}
 
-			results = append(results, TagInfo{
+			results = append(results, Info{
 				DeploymentName: name,
 				ContainerName:  container.Name,
 				Image:          container.Image,

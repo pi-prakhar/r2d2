@@ -1,9 +1,11 @@
 package utils
 
-import "github.com/rivo/tview"
+import (
+	"github.com/pi-prakhar/r2d2/k8s"
+)
 
-type App struct {
-	application *tview.Application
-	table       *tview.Table
-	namespace   string
+type App interface {
+	Run() error
+	UpdateTable(data []k8s.Info)
+	Stop()
 }

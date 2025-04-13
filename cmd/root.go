@@ -8,6 +8,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	namespace string
+	services  []string
+	frequency int
+)
+
 var rootCmd = &cobra.Command{
 	Use:   "r2d2",
 	Short: "Your Kubernetes protocol droid.",

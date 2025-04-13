@@ -9,9 +9,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var watchTagsCmd = &cobra.Command{
-	Use:   "watch-tags",
-	Short: "Watches deployment tags in a namespace",
+var watchImagesCmd = &cobra.Command{
+	Use:   "watch-images",
+	Short: "Watches deployment images in a namespace",
 	Run: func(cmd *cobra.Command, args []string) {
 		if namespace == "" || len(services) == 0 {
 			fmt.Println("Error: --namespace and --services are required")
@@ -24,14 +24,14 @@ var watchTagsCmd = &cobra.Command{
 			return
 		}
 
-		app := utils.NewWatchTagsApp(namespace)
+		app := utils.NewWatchImagesApp(namespace)
 
 		go func() {
 			for {
 				data, err := k8s.FetchDeploymentInfo(clientset, namespace, services)
 				if err != nil {
 					app.Stop()
-					fmt.Printf("Error fetching deployment info: %v\n", err)
+					fmt.Printf("Error fetching deployment tags: %v\n", err)
 					return
 				}
 
@@ -47,8 +47,8 @@ var watchTagsCmd = &cobra.Command{
 }
 
 func init() {
-	watchTagsCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "Kubernetes namespace (required)")
-	watchTagsCmd.Flags().StringSliceVarP(&services, "services", "s", []string{}, "List of service/deployment names (required)")
-	watchTagsCmd.Flags().IntVarP(&frequency, "frequency", "f", 60, "Frequency of fetching tags in seconds (default: 60)")
-	rootCmd.AddCommand(watchTagsCmd)
+	watchImagesCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "Kubernetes namespace (required)")
+	watchImagesCmd.Flags().StringSliceVarP(&services, "services", "s", []string{}, "List of service/deployment names (required)")
+	watchImagesCmd.Flags().IntVarP(&frequency, "frequency", "f", 60, "Frequency of fetching images in seconds (default: 60)")
+	rootCmd.AddCommand(watchImagesCmd)
 }

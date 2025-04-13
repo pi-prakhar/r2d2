@@ -3,9 +3,6 @@ on:
   push:
     tags:
       - 'v*'  # Triggers when a tag starting with "v" is pushed
-permissions:
-  contents: write
-  releases: write
 jobs:
   release:
     runs-on: ubuntu-latest

@@ -24,8 +24,6 @@ Helping you monitor and manage Kubernetes deployments like a true Jedi.
 
 Now you can run `r2d2` from anywhere 🎉
 
----
-
 ### 🛠 Option 2: Build from Source
 
 1. Clone the repo and build:

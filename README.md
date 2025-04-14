@@ -1,70 +1,64 @@
 # R2D2
 
-```
-          ___
-       ,-'___'-.
-     ,'  [(_)]  '.
-    |_]||[][O]o[][|
-  * |*____________| _
- | []   _______   [] |
- | []   _______   [] |
-[| ||      _      || |]
- |_|| =   [=]     ||_|
- | || =   [|]     || |
- | ||      _      || |
- | ||||   (+)    (|| |
- | ||_____________|| |
- |_| \___________/ |_|
- / \      | |      / \
-/___\    /___\    /___\
-```
-
-> Your loyal CLI droid 🤖  
-> Helping you monitor and manage Kubernetes deployments like a true Jedi.
+Your loyal CLI droid 🤖  
+Helping you monitor and manage Kubernetes deployments like a true Jedi.
 
 ---
 
-## 📦 Features
+## 🚀 Installation (macOS)
 
-For available commands and options, run:
-```
-r2d2 --help
-```
-    
----
+### 📦 Option 1: Download from Releases (Recommended)
 
-## 🚀 Installation
-
-### 1. Clone the repository and build
-```
-git clone https://github.com/yourusername/r2d2.git
-cd r2d2
-go build -o r2d2
-```
-
-### 2. Move the binary to a directory in your PATH
-```
-sudo mv r2d2 /usr/local/bin/
-```
+1. Go to the [Releases](https://github.com/yourusername/r2d2/releases) page.
+2. Download the latest `r2d2-darwin-amd64.tar.gz` or `r2d2-darwin-arm64.tar.gz` based on your system.
+3. Extract and prepare the binary:
+   ```bash
+   tar -xzf r2d2-darwin-*.tar.gz
+   chmod +x r2d2
+   xattr -d com.apple.quarantine ./r2d2
+   ```
+4. Move it to your PATH:
+   ```bash
+   sudo mv ./r2d2 /usr/local/bin/
+   ```
 
 Now you can run `r2d2` from anywhere 🎉
 
-### (Optional) Use a symlink to avoid copying after every build
-```
+---
+
+### 🛠 Option 2: Build from Source
+
+1. Clone the repo and build:
+   ```bash
+   git clone https://github.com/yourusername/r2d2.git
+   cd r2d2
+   go build -o r2d2
+   ```
+2. Move it to your PATH:
+   ```bash
+   sudo mv ./r2d2 /usr/local/bin/
+   ```
+
+(Optional) Use a symlink instead of copying after every build:
+```bash
 ln -s $(pwd)/r2d2 /usr/local/bin/r2d2
 ```
 
 ---
 
-## 🧪 Usage
+## 🛠️ Commands
 
-### `watch-tags`
-Watch and display deployment image tags from the Kubernetes cluster in real-time.
-```
-r2d2 watch-tags --namespace <namespace> --services <service1,service2>
+```bash
+r2d2 [command]
 ```
 
-This will show a live-updating table with the image tags of the specified deployments.
+### Available Commands
 
-### (More commands coming soon!)
-Future commands will be added to enhance your workflow with Kubernetes.
+- `update-tag`   – Update image tag for deployments in a namespace.
+- `watch-images` – Watch current container images of deployments.
+- `watch-tags`   – Watch image tags of deployments in real-time.
+
+- `completion`   – Generate shell autocompletion script.
+- `help`         – Show help for any command.
+
+> 💡 More commands coming soon to enhance your Kubernetes workflow!

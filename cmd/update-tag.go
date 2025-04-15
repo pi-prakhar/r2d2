@@ -37,7 +37,13 @@ var updateTagCmd = &cobra.Command{
 
 func init() {
 	updateTagCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "Kubernetes namespace (required)")
+	_ = updateTagCmd.MarkFlagRequired("namespace")
+	updateTagCmd.RegisterFlagCompletionFunc("namespace", getNamespaces)
+	updateTagCmd.RegisterFlagCompletionFunc("services", getDeployments)
 	updateTagCmd.Flags().StringSliceVarP(&services, "services", "s", []string{}, "List of service/deployment names (required)")
 	updateTagCmd.Flags().StringVarP(&tag, "tag", "t", "", "Image tag to deploy (required)")
+	_ = updateTagCmd.MarkFlagRequired("services")
+	_ = updateTagCmd.MarkFlagRequired("tag")
+	updateTagCmd.RegisterFlagCompletionFunc("services", getDeployments)
 	rootCmd.AddCommand(updateTagCmd)
 }

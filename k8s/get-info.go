@@ -13,6 +13,8 @@ type Info struct {
 	ContainerName  string
 	Image          string
 	Tag            string
+	PodName        string
+	Path           string
 }
 
 // FetchDeploymentTags retrieves deployments for given names and extracts container image tags.

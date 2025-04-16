@@ -54,8 +54,8 @@ var watchLogsCmd = &cobra.Command{
 
 func init() {
 	watchLogsCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "Kubernetes namespace (required)")
-	watchLogsCmd.Flags().StringSliceVarP(&services, "services", "s", []string{}, "List of service/deployment names (required)")
-	watchLogsCmd.Flags().IntVarP(&frequency, "frequency", "f", 60, "Frequency of fetching images in seconds (default: 60)")
-	watchLogsCmd.Flags().StringVarP(&path, "path", "p", "", "path to the file (required)")
+	watchLogsCmd.Flags().StringSliceVarP(&services, "pods", "p", []string{}, "List of service/deployment names (required)")
+	watchLogsCmd.Flags().IntVarP(&frequency, "frequency", "f", 60, "Frequency of fetching logs in seconds (default: 60)")
+	watchLogsCmd.Flags().StringVarP(&path, "location", "l", "", "path/location to the file (required)")
 	rootCmd.AddCommand(watchLogsCmd)
 }

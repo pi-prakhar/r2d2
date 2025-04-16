@@ -12,6 +12,7 @@ var (
 	services  []string
 	tag       string
 	frequency int
+	path      string
 )
 
 var rootCmd = &cobra.Command{

@@ -1,4 +1,4 @@
-package utils
+package table
 
 import (
 	"github.com/pi-prakhar/r2d2/k8s"

@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-
 	"os"
 
 	"github.com/spf13/cobra"
@@ -19,6 +18,11 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   "r2d2",
 	Short: "Your Kubernetes protocol droid.",
+	CompletionOptions: cobra.CompletionOptions{
+		DisableDefaultCmd:   true,
+		DisableNoDescFlag:   false,
+		DisableDescriptions: false,
+	},
 	Long: `
             ___
           ,-'___'-.

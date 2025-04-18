@@ -1,40 +1,42 @@
 package k8s
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"io"
+	"os"
+
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
-	"os"
 )
 
-func GetLogs(clientset *kubernetes.Clientset, namespace string, service string, path string) (string, error) {
-	//TODO add options for tail and since time
-	podLogOpts := &v1.PodLogOptions{}
+func GetLogs(clientset *kubernetes.Clientset, namespace, pod, path string) error {
+	podLogOpts := &v1.PodLogOptions{
+		Follow:     true,
+		Timestamps: false,
+	}
 
-	req := clientset.CoreV1().Pods(namespace).GetLogs(service, podLogOpts)
+	req := clientset.CoreV1().Pods(namespace).GetLogs(pod, podLogOpts)
 	podLogs, err := req.Stream(context.Background())
 	if err != nil {
-		return "", err
+		return fmt.Errorf("error getting log stream: %w", err)
 	}
 	defer podLogs.Close()
 
-	// Open the file to append logs
-	logFile, err := os.OpenFile(fmt.Sprintf("%s/%s.log", path, service), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	logFilePath := fmt.Sprintf("%s/%s.log", path, pod)
+	logFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+
 	if err != nil {
-		return "", err
+		return fmt.Errorf("error opening log file: %w", err)
 	}
 	defer logFile.Close()
 
-	buf := new(bytes.Buffer)
-	writer := io.MultiWriter(buf, logFile)
+	fmt.Printf("logs for pod %s → %s\n", pod, logFilePath)
 
-	_, err = io.Copy(writer, podLogs)
+	_, err = io.Copy(logFile, podLogs)
 	if err != nil {
-		return "", err
+		return fmt.Errorf("error streaming logs: %w", err)
 	}
 
-	return fmt.Sprintf("%s/%s.log", path, service), nil
+	return nil
 }

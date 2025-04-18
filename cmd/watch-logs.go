@@ -2,18 +2,27 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/pi-prakhar/r2d2/k8s"
-	"github.com/pi-prakhar/r2d2/utils"
 	"github.com/spf13/cobra"
-	"time"
 )
 
 var watchLogsCmd = &cobra.Command{
-	Use:   "log",
-	Short: "gets logs of a service",
+	Use:   "watch-logs",
+	Short: "Watch logs for Kubernetes pods",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if namespace == "" || len(services) == 0 || path == "" {
+		if namespace == "" || len(services) == 0 {
 			return fmt.Errorf("--namespace and --services are required")
+		}
+
+		if path == "" {
+			// Use current working directory if --location not provided
+			cwd, err := os.Getwd()
+			if err != nil {
+				return fmt.Errorf("failed to get current directory: %w", err)
+			}
+			path = cwd
 		}
 
 		clientset, err := k8s.GetClientSet()
@@ -21,34 +30,15 @@ var watchLogsCmd = &cobra.Command{
 			return fmt.Errorf("error creating Kubernetes client: %w", err)
 		}
 
-		app := utils.NewWatchLogsApp(namespace)
-
-		go func() {
-			for {
-				data := []k8s.Info{}
-				for _, service := range services {
-					filePath, err := k8s.GetLogs(clientset, namespace, service, path)
-					if err != nil {
-						app.Stop()
-						fmt.Printf("error fetching pod logs: %v\n", err)
-						return
-					}
-					data = append(data, k8s.Info{
-						PodName: service,
-						Path:    filePath,
-					})
-
+		for _, pod := range services {
+			go func(p string) {
+				err := k8s.GetLogs(clientset, namespace, p, path)
+				if err != nil {
+					fmt.Printf("Log error for %s: %v\n", p, err)
 				}
-				app.UpdateTable(data)
-				time.Sleep(time.Duration(frequency) * time.Second)
-			}
-		}()
-
-		if err := app.Run(); err != nil {
-			return fmt.Errorf("error running the application: %w", err)
+			}(pod)
 		}
-
-		return nil
+		select {}
 	},
 }
 

@@ -35,6 +35,7 @@ Now you can run `r2d2` from anywhere 🎉
 2. Move it to your PATH:
    ```bash
    sudo mv ./r2d2 /usr/local/bin/
+   source <(r2d2 completion zsh)
    ```
 
 (Optional) Use a symlink instead of copying after every build:
@@ -59,4 +60,9 @@ r2d2 [command]
 - `completion`   – Generate shell autocompletion script.
 - `help`         – Show help for any command.
 
+You can also press tab to see the available commands. It will also help you find your namespace and the services within the namespace. 
+Tip: Remember to source the cli tool to make it available in your current shell session.
+
 > 💡 More commands coming soon to enhance your Kubernetes workflow!
+
+

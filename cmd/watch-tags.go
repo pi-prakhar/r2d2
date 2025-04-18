@@ -47,9 +47,9 @@ var watchTagsCmd = &cobra.Command{
 }
 
 func init() {
+	watchTagsCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "Kubernetes namespace (required)")
 	watchTagsCmd.RegisterFlagCompletionFunc("namespace", getNamespaces)
 	watchTagsCmd.Flags().StringSliceVarP(&services, "services", "s", []string{}, "List of service/deployment names (required)")
-	_ = watchTagsCmd.MarkFlagRequired("services")
 	watchTagsCmd.RegisterFlagCompletionFunc("services", getDeployments)
 	watchTagsCmd.Flags().IntVarP(&frequency, "frequency", "f", 60, "Frequency of fetching tags in seconds (default: 60)")
 	rootCmd.AddCommand(watchTagsCmd)

@@ -48,10 +48,9 @@ var watchImagesCmd = &cobra.Command{
 
 func init() {
 	watchImagesCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "Kubernetes namespace (required)")
-	_ = watchImagesCmd.MarkFlagRequired("namespace")
 	watchImagesCmd.RegisterFlagCompletionFunc("namespace", getNamespaces)
-	watchImagesCmd.RegisterFlagCompletionFunc("services", getDeployments)
 	watchImagesCmd.Flags().StringSliceVarP(&services, "services", "s", []string{}, "List of service/deployment names (required)")
+	watchImagesCmd.RegisterFlagCompletionFunc("services", getDeployments)
 	watchImagesCmd.Flags().IntVarP(&frequency, "frequency", "f", 60, "Frequency of fetching images in seconds (default: 60)")
 	rootCmd.AddCommand(watchImagesCmd)
 }

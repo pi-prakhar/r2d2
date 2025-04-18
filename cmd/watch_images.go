@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/pi-prakhar/r2d2/constants"
 	"github.com/pi-prakhar/r2d2/k8s"
-	"github.com/pi-prakhar/r2d2/utils"
+	"github.com/pi-prakhar/r2d2/utils/table"
 	"github.com/spf13/cobra"
 )
 
@@ -13,8 +14,8 @@ var watchImagesCmd = &cobra.Command{
 	Use:   "watch-images",
 	Short: "Watches deployment images in a namespace",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if namespace == "" || len(services) == 0 {
-			return fmt.Errorf("--namespace and --services are required")
+		if namespace == "" || len(names) == 0 {
+			return fmt.Errorf("--namespace and --names are required")
 		}
 
 		clientset, err := k8s.GetClientSet()
@@ -22,11 +23,11 @@ var watchImagesCmd = &cobra.Command{
 			return fmt.Errorf("error creating Kubernetes client: %w", err)
 		}
 
-		app := utils.NewWatchImagesApp(namespace)
+		app := table.NewWatchImagesApp(namespace)
 
 		go func() {
 			for {
-				data, err := k8s.FetchDeploymentInfo(clientset, namespace, services)
+				data, err := k8s.FetchDeploymentInfo(clientset, namespace, names)
 				if err != nil {
 					app.Stop()
 					fmt.Printf("error fetching deployment tags: %v\n", err)
@@ -47,10 +48,12 @@ var watchImagesCmd = &cobra.Command{
 }
 
 func init() {
-	watchImagesCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "Kubernetes namespace (required)")
+
+	watchImagesCmd.Flags().StringVarP(&namespace, "namespace", "n", "", constants.CommonFlagDescNamespace)
+	watchImagesCmd.Flags().StringSliceVarP(&names, "names", "d", []string{}, constants.CommonFlagDescDeploymentNames)
+	watchImagesCmd.Flags().IntVarP(&frequency, "frequency", "f", constants.DeploymentWatchImagesDefaultFrequency,
+		fmt.Sprintf(constants.CommonFlagDescWatchFrequency, "images"))
 	watchImagesCmd.RegisterFlagCompletionFunc("namespace", getNamespaces)
-	watchImagesCmd.Flags().StringSliceVarP(&services, "services", "s", []string{}, "List of service/deployment names (required)")
-	watchImagesCmd.RegisterFlagCompletionFunc("services", getDeployments)
-	watchImagesCmd.Flags().IntVarP(&frequency, "frequency", "f", 60, "Frequency of fetching images in seconds (default: 60)")
+	watchImagesCmd.RegisterFlagCompletionFunc("names", getDeployments)
 	rootCmd.AddCommand(watchImagesCmd)
 }

@@ -1,4 +1,4 @@
-package utils
+package table
 
 import (
 	"github.com/gdamore/tcell/v2"

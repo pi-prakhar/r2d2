@@ -9,7 +9,7 @@ import (
 
 var (
 	namespace string
-	services  []string
+	names     []string
 	tag       string
 	frequency int
 	path      string

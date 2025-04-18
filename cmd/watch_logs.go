@@ -46,6 +46,6 @@ var watchLogsCmd = &cobra.Command{
 func init() {
 	watchLogsCmd.Flags().StringVarP(&namespace, "namespace", "n", "", constants.CommonFlagDescNamespace)
 	watchLogsCmd.Flags().StringSliceVarP(&names, "names", "d", []string{}, constants.CommonFlagDescDeploymentNames)
-	watchLogsCmd.Flags().StringVarP(&path, "location", "l", "", "path/location to the file (required)")
+	watchLogsCmd.Flags().StringVarP(&path, "location", "l", "", constants.CommonFlagDescLocation)
 	rootCmd.AddCommand(watchLogsCmd)
 }

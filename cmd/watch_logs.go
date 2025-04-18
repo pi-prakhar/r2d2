@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/pi-prakhar/r2d2/constants"
 	"github.com/pi-prakhar/r2d2/k8s"
 	"github.com/spf13/cobra"
 )
@@ -12,7 +13,7 @@ var watchLogsCmd = &cobra.Command{
 	Use:   "watch-logs",
 	Short: "Watch logs for Kubernetes pods",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if namespace == "" || len(services) == 0 {
+		if namespace == "" || len(names) == 0 {
 			return fmt.Errorf("--namespace and --services are required")
 		}
 
@@ -30,7 +31,7 @@ var watchLogsCmd = &cobra.Command{
 			return fmt.Errorf("error creating Kubernetes client: %w", err)
 		}
 
-		for _, pod := range services {
+		for _, pod := range names {
 			go func(p string) {
 				err := k8s.GetLogs(clientset, namespace, p, path)
 				if err != nil {
@@ -43,9 +44,8 @@ var watchLogsCmd = &cobra.Command{
 }
 
 func init() {
-	watchLogsCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "Kubernetes namespace (required)")
-	watchLogsCmd.Flags().StringSliceVarP(&services, "pods", "p", []string{}, "List of service/deployment names (required)")
-	watchLogsCmd.Flags().IntVarP(&frequency, "frequency", "f", 60, "Frequency of fetching logs in seconds (default: 60)")
+	watchLogsCmd.Flags().StringVarP(&namespace, "namespace", "n", "", constants.CommonFlagDescNamespace)
+	watchLogsCmd.Flags().StringSliceVarP(&names, "names", "d", []string{}, constants.CommonFlagDescDeploymentNames)
 	watchLogsCmd.Flags().StringVarP(&path, "location", "l", "", "path/location to the file (required)")
 	rootCmd.AddCommand(watchLogsCmd)
 }

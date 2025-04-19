@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/pi-prakhar/r2d2/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -22,6 +23,9 @@ var rootCmd = &cobra.Command{
 		DisableDefaultCmd:   true,
 		DisableNoDescFlag:   false,
 		DisableDescriptions: false,
+	},
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		utils.CheckForUpdate()
 	},
 	Long: `
             ___

@@ -43,6 +43,7 @@ jobs:
             r2d2-darwin-amd64.tar.gz
             r2d2-darwin-arm64.tar.gz
             r2d2-windows-amd64.zip
+            install.sh
           name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false

@@ -39,7 +39,7 @@ var rootCmd = &cobra.Command{
     | ||_____________|| |
     |_| \___________/ |_|
     / \      | |      / \
-   /___\    /___\SSt /___\
+   /___\    /___\    /___\
 
 Beep-boop! I'm R2-D2 — your loyal CLI droid, helping you monitor and 
 manage Kubernetes deployments like a true Jedi.`,

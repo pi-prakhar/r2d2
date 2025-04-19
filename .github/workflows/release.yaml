@@ -14,22 +14,25 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: '1.24'
-            
+
       - name: Build binaries for multiple platforms
         run: |
+          VERSION=${GITHUB_REF_NAME}
+          LDFLAGS="-X github.com/pi-prakhar/r2d2/version.Version=$VERSION"
+
           # Build for Linux
-          GOOS=linux GOARCH=amd64 go build -o r2d2 .
+          GOOS=linux GOARCH=amd64 go build -ldflags="$LDFLAGS" -o r2d2 .
           tar -czvf r2d2-linux-amd64.tar.gz r2d2
           
           # Build for macOS (both Intel and Apple Silicon)
-          GOOS=darwin GOARCH=amd64 go build -o r2d2 .
+          GOOS=darwin GOARCH=amd64 go build -ldflags="$LDFLAGS" -o r2d2 .
           tar -czvf r2d2-darwin-amd64.tar.gz r2d2
           
-          GOOS=darwin GOARCH=arm64 go build -o r2d2 .
+          GOOS=darwin GOARCH=arm64 go build -ldflags="$LDFLAGS" -o r2d2 .
           tar -czvf r2d2-darwin-arm64.tar.gz r2d2
           
           # Build for Windows
-          GOOS=windows GOARCH=amd64 go build -o r2d2.exe .
+          GOOS=windows GOARCH=amd64 go build -ldflags="$LDFLAGS" -o r2d2.exe .
           zip r2d2-windows-amd64.zip r2d2.exe
       
       - name: Create Release and Upload Assets

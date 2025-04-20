@@ -5,40 +5,84 @@ Helping you monitor and manage Kubernetes deployments like a true Jedi.
 
 ---
 
-## 🚀 Installation (macOS)
+## 🚀 Installation
 
-### 📦 Option 1: Download from Releases (Recommended)
+### ⚡ Option 1: One-line Installation (Recommended for Linux/macOS)
 
-1. Go to the [Releases](https://github.com/yourusername/r2d2/releases) page.
-2. Download the latest `r2d2-darwin-amd64.tar.gz` or `r2d2-darwin-arm64.tar.gz` based on your system.
-3. Extract and prepare the binary:
+> **Note:** The installation methods below are for **Linux** and **macOS**.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/pi-prakhar/r2d2/main/install.sh | bash
+```
+
+This script will automatically detect your OS (Linux/macOS) and architecture, download the latest release, and install R2D2.
+
+### 📦 Option 2: Download from Releases
+
+1. Go to the [Releases](https://github.com/pi-prakhar/r2d2/releases) page.
+2. Download the appropriate file for your system:
+   - **macOS Intel**: `r2d2-darwin-amd64.tar.gz`
+   - **macOS Apple Silicon**: `r2d2-darwin-arm64.tar.gz`
+   - **Linux x86_64**: `r2d2-linux-amd64.tar.gz`
+   - **Windows x64**: `r2d2-windows-amd64.zip`
+
+3. Extract the binary:
+   
+   **For Linux/macOS**:
    ```bash
-   tar -xzf r2d2-darwin-*.tar.gz
+   tar -xzf r2d2-*.tar.gz
    chmod +x r2d2
-   xattr -d com.apple.quarantine ./r2d2
+   
+   # macOS only: remove quarantine attribute
+   [[ "$(uname)" == "Darwin" ]] && xattr -d com.apple.quarantine ./r2d2 || true
    ```
-4. Move it to your PATH:
+   
+   **For Windows**:
+   ```powershell
+   # Extract the zip file using Windows Explorer or PowerShell
+   Expand-Archive -Path r2d2-windows-amd64.zip -DestinationPath .
+   ```
+
+4. Add to your PATH:
+   
+   **For Linux/macOS**:
    ```bash
    sudo mv ./r2d2 /usr/local/bin/
    ```
+   
+   **For Windows**: 
+   - Move the extracted `r2d2.exe` to a permanent location (e.g., `C:\Program Files\r2d2\`)
+   - Add this location to your system PATH:
+     1. Right-click on "This PC" > Properties > Advanced system settings > Environment Variables
+     2. Under System variables, find "Path" and click Edit
+     3. Add `C:\Program Files\r2d2\` to the list
+     4. Click OK to save
 
-Now you can run `r2d2` from anywhere 🎉
+### 🛠 Option 3: Build from Source
 
-### 🛠 Option 2: Build from Source
+Requires Go 1.24 or later.
 
 1. Clone the repo and build:
    ```bash
-   git clone https://github.com/yourusername/r2d2.git
+   git clone https://github.com/pi-prakhar/r2d2.git
    cd r2d2
-   go build -o r2d2
-   ```
-2. Move it to your PATH:
-   ```bash
-   sudo mv ./r2d2 /usr/local/bin/
-   source <(r2d2 completion zsh)
+   go build -o r2d2  # On Windows, this creates r2d2.exe
    ```
 
-(Optional) Use a symlink instead of copying after every build:
+2. Add to your PATH:
+   
+   **For Linux/macOS**:
+   ```bash
+   sudo mv ./r2d2 /usr/local/bin/
+   
+   # Set up shell completion
+   source <(r2d2 completion zsh)  # For zsh users
+   source <(r2d2 completion bash) # For bash users
+   ```
+   
+   **For Windows**: Follow the same PATH setup instructions as mentioned in Option 2.
+
+**Optional for Linux/macOS**: Use a symlink instead of copying after every build:
 ```bash
 ln -s $(pwd)/r2d2 /usr/local/bin/r2d2
 ```
@@ -53,16 +97,52 @@ r2d2 [command]
 
 ### Available Commands
 
-- `update-tag`   – Update image tag for deployments in a namespace.
-- `watch-images` – Watch current container images of deployments.
-- `watch-tags`   – Watch image tags of deployments in real-time.
+#### Deployment Management
+- `update-tag`      – Update image tag for deployments in a namespace
+- `restart deployment` – Restart deployments by updating annotations
+- `restart pod`     – Restart pods (by deleting them; they'll auto-restart if part of a deployment)
 
-- `completion`   – Generate shell autocompletion script.
-- `help`         – Show help for any command.
+#### Monitoring
+- `watch-images`    – Watch current container images of deployments
+- `watch-tags`      – Watch image tags of deployments in real-time
+  - `--pod-level, -p` – Show pod-level details instead of deployment-level
+- `watch-logs`      – Watch and save logs from Kubernetes pods
 
-You can also press tab to see the available commands. It will also help you find your namespace and the services within the namespace. 
-Tip: Remember to source the cli tool to make it available in your current shell session.
+#### System
+- `completion`      – Generate shell autocompletion script
+- `help`            – Show help for any command
 
-> 💡 More commands coming soon to enhance your Kubernetes workflow!
+### Examples
+
+```bash
+# Watch tags for deployments in a namespace
+r2d2 watch-tags -n default -d nginx,redis
+
+# Watch tags with pod-level details
+r2d2 watch-tags -n default -d nginx,redis --pod-level
+
+# Update image tag for deployments
+r2d2 update-tag -n default -d nginx,redis -t v1.0.1
+
+# Restart deployments
+r2d2 restart deployment -n default -d nginx,redis
+
+# Watch logs for pods
+r2d2 watch-logs -n default -p nginx-pod-1,redis-pod-1
+```
+
+### Status Colors
+
+R2D2 uses color-coded statuses for better visibility:
+
+- 🟢 **Green** - Healthy/Running/Complete
+- 🟠 **Orange** - Updating/Progressing
+- 🟡 **Yellow** - Scaling/Starting/Pending
+- 🔴 **Red** - Failed/Error/Terminated
+- ⚪️ **Gray** - Unknown
+
+You can also press tab to see the available commands. It will help you find your namespace and services within the namespace.
+
+> 💡 Tip: Remember to source the CLI tool to make it available in your current shell session.
 
 

@@ -112,6 +112,10 @@ r2d2 [command]
 - `completion`      – Generate shell autocompletion script
 - `help`            – Show help for any command
 
+You can also press tab to see the available commands. It will help you find your namespace and services within the namespace.
+
+> 💡 Tip: Remember to source the CLI tool to make it available in your current shell session.
+
 ### Examples
 
 ```bash
@@ -140,10 +144,6 @@ R2D2 uses color-coded statuses for better visibility:
 - 🟡 **Yellow** - Scaling/Starting/Pending
 - 🔴 **Red** - Failed/Error/Terminated
 - ⚪️ **Gray** - Unknown
-
-You can also press tab to see the available commands. It will help you find your namespace and services within the namespace.
-
-> 💡 Tip: Remember to source the CLI tool to make it available in your current shell session.
 
 ---
 

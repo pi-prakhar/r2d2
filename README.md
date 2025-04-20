@@ -12,7 +12,7 @@ Helping you monitor and manage Kubernetes deployments like a true Jedi.
 > **Note:** The installation methods below are for **Linux** and **macOS**.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/pi-prakhar/r2d2/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/pi-prakhar/r2d2/master/install.sh | bash
 ```
 
 This script will automatically detect your OS (Linux/macOS) and architecture, download the latest release, and install R2D2.

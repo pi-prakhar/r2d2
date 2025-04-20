@@ -65,4 +65,26 @@ Tip: Remember to source the cli tool to make it available in your current shell 
 
 > 💡 More commands coming soon to enhance your Kubernetes workflow!
 
+---
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Whether it's bug fixes, new features, or documentation improvements, your help is appreciated.
+
+### How to Contribute
+
+Please see our [Contributing Guide](CONTRIBUTING.md) for detailed instructions on:
+
+- 🍴 Forking and setting up the repository
+- 🌿 Branch naming conventions (`feature/`, `fix/`, `docs/`, etc.)
+- 💬 Commit message format and guidelines
+- 📝 Pull request process
+- 📏 Code style and standards
+
+We follow industry-standard practices for development workflows to make collaboration smooth and efficient.
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
 

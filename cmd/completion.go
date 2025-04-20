@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -100,29 +99,19 @@ func getNamespaces(cmd *cobra.Command, args []string, toComplete string) ([]stri
 
 // getDeployments returns a list of deployments in the specified namespace
 func getDeployments(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-	logFile, err := os.OpenFile("completion.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		fmt.Printf("Failed to open log file: %v\n", err)
-	}
-	defer logFile.Close()
-	logger := log.New(logFile, "completion: ", log.LstdFlags)
-
 	var ns string
 	if cmd.Flags().Changed("namespace") {
 		ns, _ = cmd.Flags().GetString("namespace")
 	} else {
 		ns = namespace
 	}
-	logger.Printf("Resolved namespace: %s (from flags: %v)", ns, cmd.Flags().Changed("namespace"))
 
 	if ns == "" {
-		logger.Println("No namespace provided, returning empty suggestions")
 		return nil, cobra.ShellCompDirectiveNoSpace | cobra.ShellCompDirectiveNoFileComp
 	}
 
 	clientset, err := k8s.GetClientSet()
 	if err != nil {
-		logger.Printf("Error getting clientset: %v", err)
 		return nil, cobra.ShellCompDirectiveNoSpace | cobra.ShellCompDirectiveNoFileComp
 	}
 
@@ -143,7 +132,6 @@ func getDeployments(cmd *cobra.Command, args []string, toComplete string) ([]str
 	var suggestions []string
 	deployments, err := clientset.AppsV1().Deployments(ns).List(context.Background(), metav1.ListOptions{})
 	if err != nil {
-		logger.Printf("Error listing deployments: %v", err)
 		return nil, cobra.ShellCompDirectiveNoSpace | cobra.ShellCompDirectiveNoFileComp
 	}
 
@@ -156,8 +144,6 @@ func getDeployments(cmd *cobra.Command, args []string, toComplete string) ([]str
 			suggestions = append(suggestions, prefix+name)
 		}
 	}
-
-	logger.Printf("Returning %d suggestions: %v", len(suggestions), suggestions)
 
 	return suggestions, cobra.ShellCompDirectiveNoSpace | cobra.ShellCompDirectiveNoFileComp
 }

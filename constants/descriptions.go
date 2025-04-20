@@ -1,11 +1,12 @@
 package constants
 
 const (
-	CommonFlagDescNamespace       = "Kubernetes namespace (required)"
-	CommonFlagDescDeploymentNames = "List of deployment names (required)"
+	CommonFlagDescNamespace       = "Target Kubernetes namespace"
+	CommonFlagDescDeploymentNames = "Comma-separated list of deployment names"
 	CommonFlagDescPodNames        = "List of pod names (required)"
 	CommonFlagDescTag             = "Image tag to deploy (required)"
 	CommonFlagDescLocation        = "Location to the file (default: current directory)"
 
-	CommonFlagDescWatchFrequency = "Frequency of fetching %s in seconds"
+	CommonFlagDescWatchFrequency = "Frequency in seconds to update %s information"
+	CommonFlagDescPodLevel       = "Display information at pod level"
 )

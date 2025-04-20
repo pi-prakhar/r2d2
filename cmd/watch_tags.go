@@ -23,24 +23,48 @@ var watchTagsCmd = &cobra.Command{
 			return fmt.Errorf("error creating Kubernetes client: %w", err)
 		}
 
-		app := table.NewWatchTagsApp(namespace)
+		if podLevel {
+			// Pod level view
+			app := table.NewWatchPodTagsApp(namespace)
 
-		go func() {
-			for {
-				data, err := k8s.FetchDeploymentInfo(clientset, namespace, names)
-				if err != nil {
-					app.Stop()
-					fmt.Printf("error fetching deployment info: %v\n", err)
-					return
+			go func() {
+				for {
+					data, err := k8s.FetchPodInfoForDeployments(clientset, namespace, names)
+					if err != nil {
+						app.Stop()
+						fmt.Printf("error fetching pod info: %v\n", err)
+						return
+					}
+
+					app.UpdateTable(data)
+					time.Sleep(time.Duration(frequency) * time.Second)
 				}
+			}()
 
-				app.UpdateTable(data)
-				time.Sleep(time.Duration(frequency) * time.Second)
+			if err := app.Run(); err != nil {
+				return fmt.Errorf("error running the application: %w", err)
 			}
-		}()
+		} else {
+			// Deployment level view (original behavior)
+			app := table.NewWatchTagsApp(namespace)
 
-		if err := app.Run(); err != nil {
-			return fmt.Errorf("error running the application: %w", err)
+			go func() {
+				for {
+					data, err := k8s.FetchDeploymentInfo(clientset, namespace, names)
+					if err != nil {
+						app.Stop()
+						fmt.Printf("error fetching deployment info: %v\n", err)
+						return
+					}
+
+					app.UpdateTable(data)
+					time.Sleep(time.Duration(frequency) * time.Second)
+				}
+			}()
+
+			if err := app.Run(); err != nil {
+				return fmt.Errorf("error running the application: %w", err)
+			}
 		}
 
 		return nil
@@ -52,6 +76,7 @@ func init() {
 	watchTagsCmd.Flags().StringSliceVarP(&names, "names", "d", []string{}, constants.CommonFlagDescDeploymentNames)
 	watchTagsCmd.Flags().IntVarP(&frequency, "frequency", "f", constants.DeploymentWatchTagsDefaultFrequency,
 		fmt.Sprintf(constants.CommonFlagDescWatchFrequency, "tags"))
+	watchTagsCmd.Flags().BoolVarP(&podLevel, "pod-level", "p", false, constants.CommonFlagDescPodLevel)
 	watchTagsCmd.RegisterFlagCompletionFunc("namespace", getNamespaces)
 	watchTagsCmd.RegisterFlagCompletionFunc("names", getDeployments)
 	rootCmd.AddCommand(watchTagsCmd)

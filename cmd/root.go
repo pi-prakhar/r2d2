@@ -14,6 +14,7 @@ var (
 	tag       string
 	frequency int
 	path      string
+	podLevel  bool
 )
 
 var rootCmd = &cobra.Command{

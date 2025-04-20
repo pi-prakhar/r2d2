@@ -2,9 +2,9 @@ package k8s
 
 import (
 	"context"
-	"strings"
 
 	"github.com/pi-prakhar/r2d2/constants"
+	"github.com/pi-prakhar/r2d2/utils/helper"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -42,16 +42,12 @@ func FetchDeploymentInfo(clientset *kubernetes.Clientset, namespace string, name
 
 		// Process each container
 		for _, container := range deploy.Spec.Template.Spec.Containers {
-			imageParts := strings.Split(container.Image, ":")
-			tag := "latest"
-			if len(imageParts) > 1 {
-				tag = imageParts[len(imageParts)-1]
-			}
+			image, tag := helper.ParseImageTag(container.Image)
 
 			results = append(results, Info{
 				DeploymentName: name,
 				ContainerName:  container.Name,
-				Image:          container.Image,
+				Image:          image,
 				Tag:            tag,
 				Status:         deploymentStatus,
 			})

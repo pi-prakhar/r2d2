@@ -8,7 +8,7 @@ import (
 
 	"github.com/pi-prakhar/r2d2/constants"
 	ghservice "github.com/pi-prakhar/r2d2/internal/github"
-	"github.com/pi-prakhar/r2d2/k8s"
+	"github.com/pi-prakhar/r2d2/internal/k8s"
 	"github.com/pi-prakhar/r2d2/ui/view"
 	"github.com/pi-prakhar/r2d2/utils/helper"
 	"github.com/spf13/cobra"

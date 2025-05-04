@@ -2,7 +2,7 @@ package table
 
 import (
 	"github.com/gdamore/tcell/v2"
-	"github.com/pi-prakhar/r2d2/k8s"
+	"github.com/pi-prakhar/r2d2/internal/k8s"
 	"github.com/pi-prakhar/r2d2/utils"
 	"github.com/rivo/tview"
 )

@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pi-prakhar/r2d2/k8s"
+	"github.com/pi-prakhar/r2d2/internal/k8s"
 	"github.com/spf13/cobra"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )

@@ -1,8 +1,6 @@
 package table
 
-import (
-	"github.com/pi-prakhar/r2d2/k8s"
-)
+import "github.com/pi-prakhar/r2d2/internal/k8s"
 
 type App interface {
 	Run() error

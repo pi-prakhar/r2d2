@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/pi-prakhar/r2d2/constants"
-	"github.com/pi-prakhar/r2d2/k8s"
-	"github.com/pi-prakhar/r2d2/utils/table"
+	"github.com/pi-prakhar/r2d2/internal/k8s"
+	"github.com/pi-prakhar/r2d2/ui/table"
 	"github.com/spf13/cobra"
 )
 

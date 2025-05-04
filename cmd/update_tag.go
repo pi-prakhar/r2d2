@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/pi-prakhar/r2d2/constants"
-	"github.com/pi-prakhar/r2d2/k8s"
+	"github.com/pi-prakhar/r2d2/internal/k8s"
 	"github.com/spf13/cobra"
 )
 

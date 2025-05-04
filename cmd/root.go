@@ -9,12 +9,13 @@ import (
 )
 
 var (
-	namespace string
-	names     []string
-	tag       string
-	frequency int
-	path      string
-	podLevel  bool
+	namespace        string
+	names            []string
+	tag              string
+	frequency        int
+	path             string
+	podLevel         bool
+	githubRepository string
 )
 
 var rootCmd = &cobra.Command{

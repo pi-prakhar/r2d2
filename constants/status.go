@@ -32,3 +32,13 @@ const (
 	PodPhaseFailed    = "Failed"
 	PodPhaseUnknown   = "Unknown"
 )
+
+type AutoDeployStatus string
+
+const (
+	AutoDeployStatusInProgress AutoDeployStatus = "in_progress"
+	AutoDeployStatusCompleted  AutoDeployStatus = "completed"
+	AutoDeployStatusFailed     AutoDeployStatus = "failed"
+	AutoDeployStatusSuccess    AutoDeployStatus = "success"
+	AutoDeployStatusWaiting    AutoDeployStatus = "waiting"
+)

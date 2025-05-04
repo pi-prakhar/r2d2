@@ -97,6 +97,23 @@ ln -s $(pwd)/r2d2 /usr/local/bin/r2d2
 
 ---
 
+## 🛠️ Prerequisites
+
+Before using R2D2, ensure the following prerequisites are met:
+
+1. **Kubernetes Access**
+   - `kubectl` should be properly configured.
+   - Ensure the correct context is selected (`kubectl config current-context`).
+   - You must have proper permissions to update deployments.
+
+2. **GitHub Token**
+
+   ```bash
+   # Set your GitHub token as an environment variable
+   export GITHUB_TOKEN="your_github_token"
+
+---
+
 ## 🛠️ Commands
 
 ```bash
@@ -149,6 +166,8 @@ r2d2 watch-logs -n default -p nginx-pod-1,redis-pod-1
 # Auto-deploy when GitHub workflows complete
 r2d2 auto-deploy -r my-repo -t v1.0.0 -n default -d deployment1,deployment2
 ```
+### REFERENCE
+[Auto Deploy Guide](Docs/GuideToAutoDeploy)
 
 ### Status Colors
 
@@ -162,112 +181,13 @@ R2D2 uses color-coded statuses for better visibility:
 
 ---
 
-## 🤖 Auto-Deploy Guide
-
-The `auto-deploy` command automates the process of deploying to Kubernetes when GitHub workflows complete successfully. It monitors workflow status in real-time and automatically updates your deployments.
-
-### Prerequisites
-
-1. **GitHub Token**
-
-   ```bash
-   # Set your GitHub token as an environment variable
-   export GITHUB_TOKEN="your_github_token"
-   ```
-
-   > 💡 The token needs `repo` scope to access workflow information
-
-2. **Kubernetes Access**
-   - Make sure you have access to your Kubernetes cluster
-   - The correct context is selected (`kubectl config current-context`)
-   - Proper permissions to update deployments
-
-### Usage
-
-```bash
-r2d2 auto-deploy [flags]
-```
-
-#### Required Flags
-
-- `-r, --repo` - GitHub repository name
-- `-t, --tag` - Git tag to watch
-- `-n, --namespace` - Kubernetes namespace
-- `-d, --names` - Comma-separated list of deployment names
-
-#### Optional Flags
-
-- `-i, --interval` - Polling interval in seconds (default: 10)
-
-### Examples
-
-1. **Basic Usage**
-
-   ```bash
-   r2d2 auto-deploy \
-     -r my-service \
-     -t v1.0.0 \
-     -n production \
-     -d frontend,backend
-   ```
-
-2. **Custom Polling Interval**
-   ```bash
-   r2d2 auto-deploy \
-     -r my-service \
-     -t v1.0.0 \
-     -n production \
-     -d frontend,backend \
-     -i 30
-   ```
-
-### Workflow
-
-1. **Start Monitoring**
-
-   - Command starts watching GitHub workflows for the specified tag
-   - Shows real-time status with modern UI
-
-2. **Status Display**
-
-   ```
-   🚀 Deployment Monitor: v1.0.0
-   📦 Orange-Health/my-service
-   ────────────────────────────────────────────────────────────────────
-
-   ✅ Build and Test
-      Status: Success
-      Started: 09:11:49
-
-   🔄 Deploy to ECR
-      Status: In Progress
-      Started: 09:11:49
-
-   ────────────────────────────────────────────────────────────────────
-   Progress: 1/2 completed (1 successful)
-   ```
-
-3. **Automatic Deployment**
-   - When all workflows complete successfully:
-     - Updates specified Kubernetes deployments
-     - Shows progress for each deployment
-     - Provides final success/failure summary
-
-### Status Indicators
-
-- ✅ Success - Workflow completed successfully
-- ❌ Failed - Workflow failed or errored
-- 🔄 In Progress - Workflow is currently running
-- ⏳ Pending - Workflow hasn't started yet
-
-
 ## 🤝 Contributing
 
 We welcome contributions from the community! Whether it's bug fixes, new features, or documentation improvements, your help is appreciated.
 
 ### How to Contribute
 
-Please see our [Contributing Guide](CONTRIBUTING.md) for detailed instructions on:
+Please see our [Contributing Guide](Docs/CONTRIBUTING.md) for detailed instructions on:
 
 - 🍴 Forking and setting up the repository
 - 🌿 Branch naming conventions (`feature/`, `fix/`, `docs/`, etc.)

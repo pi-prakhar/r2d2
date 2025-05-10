@@ -10,6 +10,7 @@ const (
 	CommonFlagDescWatchFrequency = "Frequency in seconds to update %s information"
 	CommonFlagDescPodLevel       = "Display information at pod level"
 
-	AutoDeployGitTagToWatch    = "Git tag to watch (required)"
-	AutoDeployGithubRepository = "GitHub repository name (required)"
+	AutoDeployGitTagToWatch         = "Git tag to watch"
+	AutoDeployGithubRepository      = "GitHub repository name"
+	AutoDeployGithubRepositoryOwner = "GitHub repository owner (e.g., 'octocat' for https://github.com/octocat/repo)"
 )

@@ -33,6 +33,13 @@ const (
 	PodPhaseUnknown   = "Unknown"
 )
 
+const (
+	JobStatusInProgress = "in_progress"
+	JobStatusFailed     = "failed"
+	JobStatusSuccess    = "success"
+	JobStatusCompleted  = "completed"
+)
+
 type AutoDeployStatus string
 
 const (

@@ -24,7 +24,7 @@ var autoDeployCmd = &cobra.Command{
 			namespace,
 			names,
 			frequency,
-			"Orange-Health", // Example owner
+			githubRepositoryOwner,
 		)
 		if err != nil {
 			return fmt.Errorf("error parsing flags: %w", err)
@@ -39,10 +39,10 @@ var autoDeployCmd = &cobra.Command{
 		var errors []error
 		var summary string
 
-		status, _ := ghservice.GetGithubWorkflowStatus(ghClient, config)
+		status, _, _ := ghservice.GetGithubWorkflowStatus(ghClient, config)
 
 		if status == constants.AutoDeployStatusInProgress || status == constants.AutoDeployStatusWaiting {
-			ui := view.NewUI(config.Owner, config.Repo, config.Tag)
+			ui := view.NewUI(config.Owner, config.Repo, config.Tag, names)
 
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
@@ -57,11 +57,14 @@ var autoDeployCmd = &cobra.Command{
 					case <-ctx.Done():
 						return
 					default:
-						status, _ := ghservice.GetGithubWorkflowStatus(ghClient, config)
+						status, jobStatuses, _ := ghservice.GetGithubWorkflowStatus(ghClient, config)
 
 						if status == constants.AutoDeployStatusInProgress || status == constants.AutoDeployStatusWaiting {
 							ui.Clear()
 							ui.PrintStatus(status == constants.AutoDeployStatusWaiting)
+							if status == constants.AutoDeployStatusInProgress {
+								ui.PrintJobStatuses(jobStatuses)
+							}
 							time.Sleep(time.Duration(config.Interval) * time.Second)
 							continue
 						}
@@ -80,18 +83,18 @@ var autoDeployCmd = &cobra.Command{
 		}
 
 		// Final deployment update check
-		status, err = ghservice.GetGithubWorkflowStatus(ghClient, config)
+		status, _, err = ghservice.GetGithubWorkflowStatus(ghClient, config)
 		if status == constants.AutoDeployStatusFailed {
 			errors = append(errors, err)
-			summary = helper.BuildFinalSummary(false, false, config, errors)
+			summary = helper.BuildFinalSummary(false, false, config, names, errors)
 		}
 
 		if status == constants.AutoDeployStatusCompleted {
 			k8sSuccess, deployErrors := k8s.UpdateK8sDeploymentTag(k8sClient, config)
 			if k8sSuccess {
-				summary = helper.BuildFinalSummary(true, true, config, deployErrors)
+				summary = helper.BuildFinalSummary(true, true, config, names, deployErrors)
 			} else {
-				summary = helper.BuildFinalSummary(true, false, config, deployErrors)
+				summary = helper.BuildFinalSummary(true, false, config, names, deployErrors)
 			}
 		}
 
@@ -105,10 +108,14 @@ func init() {
 	autoDeployCmd.Flags().StringSliceVarP(&names, "names", "d", []string{}, constants.CommonFlagDescDeploymentNames)
 	autoDeployCmd.Flags().StringVarP(&tag, "tag", "t", "", constants.AutoDeployGitTagToWatch)
 	autoDeployCmd.Flags().IntVarP(&frequency, "frequency", "f", constants.AutoDeployWatchTagDefaultFrequency, fmt.Sprintf(constants.CommonFlagDescWatchFrequency, "GitHub workflows"))
+	autoDeployCmd.Flags().StringVarP(&githubRepositoryOwner, "repository-owner", "o", "", constants.AutoDeployGithubRepositoryOwner)
 	autoDeployCmd.Flags().StringVarP(&githubRepository, "repository", "r", "", constants.AutoDeployGithubRepository)
 
 	autoDeployCmd.MarkFlagRequired("repository")
 	autoDeployCmd.MarkFlagRequired("tag")
+	autoDeployCmd.MarkFlagRequired("repository-owner")
+	autoDeployCmd.MarkFlagRequired("names")
+	autoDeployCmd.MarkFlagRequired("namespace")
 
 	autoDeployCmd.RegisterFlagCompletionFunc("namespace", getNamespaces)
 	autoDeployCmd.RegisterFlagCompletionFunc("names", getDeployments)

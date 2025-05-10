@@ -11,7 +11,13 @@ import (
 	"github.com/pi-prakhar/r2d2/utils/helper"
 )
 
-func GetGithubWorkflowStatus(ghClient *github.Client, config config.AutoDeployConfig) (constants.AutoDeployStatus, error) {
+type WorkflowJobStatus struct {
+	Name       string
+	Status     string
+	Conclusion string
+}
+
+func GetGithubWorkflowStatus(ghClient *github.Client, config config.AutoDeployConfig) (constants.AutoDeployStatus, []WorkflowJobStatus, error) {
 	ctx := context.Background()
 
 	opts := &github.ListWorkflowRunsOptions{
@@ -20,7 +26,7 @@ func GetGithubWorkflowStatus(ghClient *github.Client, config config.AutoDeployCo
 
 	runs, _, err := ghClient.Actions.ListRepositoryWorkflowRuns(ctx, config.Owner, config.Repo, opts)
 	if err != nil {
-		return constants.AutoDeployStatusFailed, err
+		return constants.AutoDeployStatusFailed, nil, err
 	}
 
 	filteredRuns := []*github.WorkflowRun{}
@@ -32,30 +38,48 @@ func GetGithubWorkflowStatus(ghClient *github.Client, config config.AutoDeployCo
 	}
 
 	if len(filteredRuns) == 0 {
-		return constants.AutoDeployStatusWaiting, nil
+		return constants.AutoDeployStatusWaiting, nil, nil
 	}
 
 	var ecrPushSuccessful bool
 
 	for _, run := range filteredRuns {
-		if run.Name != nil && strings.Contains(strings.ToLower(*run.Name), "ecr") {
-			if *run.Status == "completed" {
-				if *run.Conclusion == "success" {
+		if strings.Contains(strings.ToLower(run.GetName()), "ecr") {
+			if run.GetStatus() == "completed" {
+				if run.GetConclusion() == "success" {
 					ecrPushSuccessful = true
 				}
 			} else {
-				return constants.AutoDeployStatusInProgress, nil
+				// Workflow still in progress — fetch the jobs
+				jobs, _, err := ghClient.Actions.ListWorkflowJobs(ctx, config.Owner, config.Repo, run.GetID(), &github.ListWorkflowJobsOptions{
+					ListOptions: github.ListOptions{PerPage: 100},
+				})
+				if err != nil {
+					return constants.AutoDeployStatusInProgress, nil, fmt.Errorf("failed to fetch workflow jobs: %w", err)
+				}
+
+				var jobStatuses []WorkflowJobStatus
+				for _, job := range jobs.Jobs {
+					jobStatuses = append(jobStatuses, WorkflowJobStatus{
+						Name:       job.GetName(),
+						Status:     job.GetStatus(),
+						Conclusion: job.GetConclusion(),
+					})
+				}
+
+				return constants.AutoDeployStatusInProgress, jobStatuses, nil
 			}
 			break
 		}
 	}
 
 	if !ecrPushSuccessful {
-		return constants.AutoDeployStatusFailed, fmt.Errorf("ECR Push workflow failed. Aborting deployments")
+		return constants.AutoDeployStatusFailed, nil, fmt.Errorf("ECR Push workflow failed. Aborting deployments")
 	}
 
-	return constants.AutoDeployStatusCompleted, nil
+	return constants.AutoDeployStatusCompleted, nil, nil
 }
+
 func ParseAutoDeployFlags(
 	githubRepository string,
 	tag string,

@@ -148,3 +148,23 @@ func GetPodPhaseColor(phase string) (tcell.Color, string) {
 		return tcell.ColorWhite, phase
 	}
 }
+
+func GetJobStatusColorTag(status string) string {
+	switch status {
+	// 🟢 Success - Job completed successfully
+	case constants.JobStatusSuccess:
+		return "[green]"
+
+	// 🔴 Failed - Job failed
+	case constants.JobStatusFailed:
+		return "[red]"
+
+	// ⚪️ In Progress - Job is still running
+	case constants.JobStatusInProgress:
+		return "[gray]"
+
+	// ⚪️ Default - Unknown or unhandled status
+	default:
+		return "[gray]"
+	}
+}

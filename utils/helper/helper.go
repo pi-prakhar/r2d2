@@ -58,12 +58,13 @@ func SeparatorLine() string {
 	return strings.Repeat("─", width)
 }
 
-func BuildFinalSummary(ecrSuccess, deploySuccess bool, config config.AutoDeployConfig, errors []error) string {
+func BuildFinalSummary(ecrSuccess, deploySuccess bool, config config.AutoDeployConfig, deployments []string, errors []error) string {
 	var sb strings.Builder
 	// sep := helper.SeparatorLine()
 	sb.WriteString(fmt.Sprintf("🚀 [Tag] %s\n", config.Tag))
 	sb.WriteString(fmt.Sprintf("📦 [Repository] %s/%s\n", config.Owner, config.Repo))
-	sb.WriteString("🏁 Final Summary:\n\n")
+	sb.WriteString(fmt.Sprintf("🧩 [Deployments] %s\n\n", FormatList(deployments, "None")))
+	sb.WriteString("🏁 Final Summary\n")
 
 	if !ecrSuccess {
 		sb.WriteString("❌ [ECR Push] - Failed\n")
@@ -88,4 +89,11 @@ func BuildFinalSummary(ecrSuccess, deploySuccess bool, config config.AutoDeployC
 	sb.WriteString(fmt.Sprintf("\n🔗 GitHub Actions: https://github.com/%s/%s/actions\n", config.Owner, config.Repo))
 
 	return sb.String()
+}
+
+func FormatList(items []string, emptyMessage string) string {
+	if len(items) == 0 {
+		return emptyMessage
+	}
+	return fmt.Sprintf("%s", items)
 }
